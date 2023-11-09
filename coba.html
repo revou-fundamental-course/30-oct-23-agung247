@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator BMI</title>
+    <style>
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="bmiForm">
+        <label for="weight">Berat (kg):</label>
+        <input type="number" id="weight" name="weight" required>
+
+        <label for="height">Tinggi (cm):</label>
+        <input type="number" id="height" name="height" required>
+
+        <button type="button" onclick="calculateBMI()">Hitung BMI</button>
+        <button type="button" onclick="resetForm()">Reset</button>
+
+        <h2>Hasil BMI:</h2>
+        <p id="result"></p>
+    </form>
+
+    <script>
+        function calculateBMI() {
+            var weight = document.getElementById("weight").value;
+            var height = document.getElementById("height").value;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/calculate-bmi", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    displayResult(response.bmi);
+                }
+            };
+
+            var data = JSON.stringify({ weight: weight, height: height });
+            xhr.send(data);
+        }
+
+        function resetForm() {
+            document.getElementById("bmiForm").reset();
+            document.getElementById("result").innerHTML = "";
+        }
+
+        function displayResult(bmi) {
+            var resultElement = document.getElementById("result");
+            resultElement.innerHTML = "BMI: " + bmi.toFixed(2);
+        }
+    </script>
+
+</body>
+</html>
